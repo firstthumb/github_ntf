@@ -57,7 +57,7 @@ mixin _$RepoStore on _RepoStore, Store {
   final _$getReposAsyncAction = AsyncAction('getRepos');
 
   @override
-  Future<dynamic> getRepos() {
-    return _$getReposAsyncAction.run(() => super.getRepos());
+  Future<dynamic> getRepos(String query) {
+    return _$getReposAsyncAction.run(() => super.getRepos(query));
   }
 }

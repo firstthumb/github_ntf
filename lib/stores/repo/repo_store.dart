@@ -29,10 +29,10 @@ abstract class _RepoStore implements Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  Future getRepos() async {
+  Future getRepos(String query) async {
     loading = true;
 
-    repository.getRepos().then((repoList) {
+    repository.getRepos(query).then((repoList) {
       this.repoList = repoList;
       loading = false;
       success = true;

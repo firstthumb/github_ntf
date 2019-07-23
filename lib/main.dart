@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:github_ntf/di/modules/netwok_module.dart';
 import 'package:github_ntf/routes.dart';
 import 'package:github_ntf/ui/home/home.dart';
 import 'package:inject/inject.dart';
@@ -12,13 +14,15 @@ import 'di/modules/local_module.dart';
 var appComponent;
 
 void main() {
+  debugPaintSizeEnabled = false;
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
   ]).then((_) async {
-    appComponent = await AppComponent.create(LocalModule());
+    appComponent = await AppComponent.create(NetworkModule(), LocalModule());
 
     runApp(appComponent.app);
   });

@@ -1,19 +1,31 @@
 class Repo {
-  String name;
   int id;
+  String name;
+  String url;
+  String description;
+  int starCount;
 
   Repo({
-    this.name,
     this.id,
+    this.name,
+    this.url,
+    this.description,
+    this.starCount
   });
 
   factory Repo.fromMap(Map<String, dynamic> json) => Repo(
-    name: json["name"],
     id: json["id"],
+    name: json["name"],
+    url: json["html_url"],
+    description: json["description"],
+    starCount: json["stargazers_count"],
   );
 
   Map<String, dynamic> toMap() => {
-    "name": name,
     "id": id,
+    "name": name,
+    "url": url,
+    "description": description,
+    "starCount": starCount,
   };
 }
