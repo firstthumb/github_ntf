@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:github_ntf/data/local/datasources/repo/repo_datasource.dart';
 import 'package:github_ntf/data/repository.dart';
 import 'package:github_ntf/data/sharedpref/shared_preference_helper.dart';
+import 'package:github_ntf/di/modules/netwok_module.dart';
 import 'package:inject/inject.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,7 +12,7 @@ import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @module
-class LocalModule {
+class LocalModule extends NetworkModule {
   @provide
   @singleton
   @asynchronous
@@ -43,7 +44,8 @@ class LocalModule {
   @provide
   @singleton
   Repository provideRepository() =>
-      Repository(provideSharedPreferenceHelper(), provideGithubDataSource());
+      Repository(provideGithubApi(), provideSharedPreferenceHelper(),
+          provideGithubDataSource());
 
 
 }

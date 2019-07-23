@@ -1,10 +1,11 @@
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:github_ntf/data/sharedpref/contants/preferences.dart';
+import 'package:github_ntf/models/repo/repo.dart';
 import 'package:github_ntf/stores/repo/repo_store.dart';
 import 'package:github_ntf/widgets/progress_indicator_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:github_ntf/widgets/repository_search_widget.dart';
+import 'package:github_ntf/widgets/repository_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,42 +15,44 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //store
   final _store = RepoStore();
+  final _searchTextController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
     //get all posts
-    _store.getRepos();
+    _store.getRepos("dart");
+    _searchTextController.addListener(() {
+      if (_searchTextController.text.length > 2) {
+        _store.getRepos(_searchTextController.text);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBody(),
+      body: SafeArea(child: _buildSearchField(context),),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Text('Repos'),
-      actions: <Widget>[
-        IconButton(
-          onPressed: () {
-            SharedPreferences.getInstance().then((preference) {
-              preference.setBool(Preferences.is_logged_in, false);
-            });
-          },
-          icon: Icon(
-            Icons.power_settings_new,
+  Widget _buildSearchField(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          RepositorySearchWidget(
+            textController: _searchTextController,
           ),
-        )
-      ],
+          Expanded(
+            child: _buildSearchResult(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildSearchResult() {
     return Stack(
       children: <Widget>[
         Observer(
@@ -79,25 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
         return Divider();
       },
       itemBuilder: (context, position) {
-        return ListTile(
-          leading: Icon(Icons.cloud_circle),
-          title: Text(
-            '${_store.repoList.repos[position].name}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            style: Theme.of(context).textTheme.title,
-          ),
-          subtitle: Text(
-            '${_store.repoList.repos[position].name}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-          ),
+        return RepositoryWidget(
+          repo: _store.repoList.repos[position],
+          onLike: () => _onLike(_store.repoList.repos[position]),
         );
       },
     )
         : Center(child: Text('No posts found'));
+  }
+
+  void _onLike(Repo repo) {
+
   }
 
   // General Methods:-----------------------------------------------------------
